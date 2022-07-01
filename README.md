@@ -1,5 +1,5 @@
 # jokes-generator
-Research a challeging task - generating jokes with NLP models.
+Generate jokes with NLP model
 
 The main goal is to build model to generate jokes from setup.
 Using datasets where for each setup there are ~200 punches. For each pair (setup, punch) there is a mark (number of likes).
@@ -11,21 +11,23 @@ Methods already tried for joles markup model:
     No approach showed sofisticated results. Train loss is reducing on each step, but eval loss stay unchanged.
     Fixed embeddings are not able to handle such complex task.
     
-  2. T5 model pretrained on russian corpus. Setup to encoder, punch to decoder. 
+  2. Pretrained by sber T5 model. Setup to encoder, punch to decoder. 
     Decoder output to fully-connected layer. Trained with MSEloss on Google Colab.
     No sofisticated results. Train loss and eval loss are not reducing during epochs.
     Can't generalize the mark function at all.
 
  
-Hard to separate task into two models (markup model and jokes generation model). 
-Because for jokes markup need unerstanding how to build joke and visa versa.
+I think, it's too hard to separate tasks into two models (markup model and jokes generation model). 
+Because for jokes markup need an understanding how to build joke and visa versa.
 
-TODO:
-1. - Finetune T5 model on big corpus of russian anekdots. 
-   - Train T5 model from previous step to generate punch by given setup.
-   - Train T5 model from previous step to mark joke by given setup and punch.
+Next plan is:
+1. Take pretrained T5 model.
+2. Fine-tune model on unsupervised task on new corpus of texts (anecdotes, complete jokes, humor texts).
+3. Fine-tune model on supervised task - generation punch from setup.
+4. Fine-tune model on supervised task - punch score prediction.
+5. Repeat steps 3 and 4. Model will be trained on two independent tasks, but in same field (humor). 
+6. That's should make model be robust.
 
-2. Reinforcement learning + transformer for text generation.
-      Research paper: https://arxiv.org/pdf/2101.04229.pdf
-      
 
+Another ideas:
+- Reinforcement learning + transformer for text generation. Research paper: https://arxiv.org/pdf/2101.04229.pdf

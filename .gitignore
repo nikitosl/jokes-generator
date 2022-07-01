@@ -1,0 +1,15 @@
+.idea/
+
+*.json
+*.csv
+*.tsv
+*.pkl
+*.xml
+data/
+
+.ipynb_checkpoints/
+*-checkpoint.ipynb
+
+output_dir/
+
+/selenium/chromedriver
