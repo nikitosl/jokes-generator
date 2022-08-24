@@ -54,7 +54,7 @@ from transformers import (
     HfArgumentParser,
     is_tensorboard_available,
 )
-from transformers.utils import get_full_repo_name, is_offline_mode, send_example_telemetry
+from transformers.utils import get_full_repo_name, is_offline_mode
 
 
 logger = logging.getLogger(__name__)
@@ -409,7 +409,7 @@ def main():
 
     # Sending telemetry. Tracking the example usage helps us better allocate resources to maintain them. The
     # information sent is the one passed as arguments along with your Python/PyTorch versions.
-    send_example_telemetry("run_summarization", model_args, data_args, framework="flax")
+    # send_example_telemetry("run_summarization", model_args, data_args, framework="flax")
 
     if (
         os.path.exists(training_args.output_dir)
