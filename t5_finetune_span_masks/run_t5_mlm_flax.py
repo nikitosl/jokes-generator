@@ -140,6 +140,14 @@ class ModelArguments:
             )
         },
     )
+    is_pytorch_weights: Optional[bool] = field(
+        default=True,
+        metadata={
+            "help": (
+                "Whether model has pytorch weights or not (flax for example)."
+            )
+        },
+    )
     model_type: Optional[str] = field(
         default=None,
         metadata={"help": "If training from scratch, pass a model type from the list: " + ", ".join(MODEL_TYPES)},
@@ -731,7 +739,7 @@ def main():
             config=config,
             seed=training_args.seed,
             dtype=getattr(jnp, model_args.dtype),
-            from_pt=True,
+            from_pt=model_args.is_pytorch_weights,
             use_auth_token=True if model_args.use_auth_token else None,
         )
     else:
