@@ -154,6 +154,14 @@ class ModelArguments:
             )
         },
     )
+    is_pytorch_weights: Optional[bool] = field(
+        default=True,
+        metadata={
+            "help": (
+                "Whether model has pytorch weights or not (flax for example)."
+            )
+        },
+    )
     model_type: Optional[str] = field(
         default=None,
         metadata={"help": "If training from scratch, pass a model type from the list: " + ", ".join(MODEL_TYPES)},

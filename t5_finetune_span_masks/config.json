@@ -37,7 +37,7 @@
   "validation_ref_file": null,
   "overwrite_cache": true,
   "validation_split_percentage": 10,
-  "max_seq_length": 500,
+  "max_seq_length": 1000,
   "preprocessing_num_workers": 8,
   "mlm_probability": 0.15,
   "mean_noise_span_length": 3
