@@ -28,7 +28,7 @@
   "tokenizer_name": null,
   "cache_dir": null,
   "use_fast_tokenizer": false,
-  "dtype": "float32",
+  "dtype": "float16",
   "dataset_name": null,
   "dataset_config_name": null,
   "train_file": "data/agg-complete-text-dataset/agg-complete-text-dataset.csv",
