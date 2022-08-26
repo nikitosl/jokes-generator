@@ -33,12 +33,19 @@ Another ideas:
 - Reinforcement learning + transformer for text generation. Research paper: https://arxiv.org/pdf/2101.04229.pdf
 
 
-# Run finetune process
+# Run T5 finetune process
 ### Run complete finetune in loop:
 ```
 cd jokes-generator/
 bash setup_linux.sh
 bash run_train.sh >> log.txt
+```
+### Run finetune semi-manually:
+```
+cd jokes-generator/
+bash setup_linux.sh
+bash run_finetune_span_maks_from_scratch.sh
+bash run_finetune_generation_loop.sh
 ```
 
 ### Run finetune manually:
