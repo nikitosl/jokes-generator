@@ -31,3 +31,21 @@ Next plan is:
 
 Another ideas:
 - Reinforcement learning + transformer for text generation. Research paper: https://arxiv.org/pdf/2101.04229.pdf
+
+
+# Run finetune process
+### Run complete finetune in loop:
+```
+cd jokes-generator/
+bash setup_linux.sh
+bash run_train.sh
+```
+
+### Run finetune manually:
+```
+cd jokes-generator/
+bash setup_linux.sh
+python t5_finetune_span_masks/run_span_mask_train_flax.py t5_finetune_span_masks/config.json
+python t5_finetune_generation/run_conditional_generation_train_flax.py t5_finetune_generation/config_setup_punch.json
+python t5_finetune_generation/run_conditional_generation_train_flax.py t5_finetune_generation/config_mark.json
+```
