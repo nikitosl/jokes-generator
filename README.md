@@ -38,7 +38,7 @@ Another ideas:
 ```
 cd jokes-generator/
 bash setup_linux.sh
-bash run_train.sh
+bash run_train.sh >> log.txt
 ```
 
 ### Run finetune manually:
