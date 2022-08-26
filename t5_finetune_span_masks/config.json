@@ -1,5 +1,5 @@
 {
-  "output_dir": "/home/my/joke-generator-rus-t5",
+  "output_dir": "../joke-generator-rus-t5",
   "overwrite_output_dir": true,
   "do_train": true,
   "do_eval": true,
@@ -31,7 +31,7 @@
   "dtype": "float32",
   "dataset_name": null,
   "dataset_config_name": null,
-  "train_file": "/home/my/jokes-generator/data/agg-complete-text-dataset.csv",
+  "train_file": "data/agg-complete-text-dataset/agg-complete-text-dataset.csv",
   "validation_file": null,
   "train_ref_file": null,
   "validation_ref_file": null,

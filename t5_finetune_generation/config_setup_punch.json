@@ -1,5 +1,5 @@
 {
-  "output_dir": "/home/my/joke-generator-rus-t5",
+  "output_dir": "../joke-generator-rus-t5",
   "overwrite_output_dir": true,
   "do_train": true,
   "do_eval": true,
@@ -35,8 +35,8 @@
   "dataset_config_name": null,
   "text_column": "setup",
   "summary_column": "punch",
-  "train_file": "/home/my/jokes-generator/data/agg-setup-punch-dataset-train.csv",
-  "validation_file": "/home/my/jokes-generator/data/agg-setup-punch-dataset-valid.csv",
+  "train_file": "data/agg-setup-punch-dataset/agg-setup-punch-dataset-train.csv",
+  "validation_file": "data/agg-setup-punch-dataset/agg-setup-punch-dataset-valid.csv",
   "test_file": null,
   "max_source_length": 150,
   "max_target_length": 150,
