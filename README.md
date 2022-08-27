@@ -56,3 +56,6 @@ python t5_finetune_span_masks/run_span_mask_train_flax.py t5_finetune_span_masks
 python t5_finetune_generation/run_conditional_generation_train_flax.py t5_finetune_generation/config_setup_punch.json
 python t5_finetune_generation/run_conditional_generation_train_flax.py t5_finetune_generation/config_mark.json
 ```
+
+# Model versions
+93c99f8 - fine-tuned on span-masks (20 epochs)
