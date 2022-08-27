@@ -8,31 +8,14 @@ model = T5ForConditionalGeneration.from_pretrained(model_name, from_flax=model_t
 print(f'Loaded model {model_name}')
 
 # Punch generation
-print('(1/2) Punch Generation task')
-df = pd.read_csv('data/agg-setup-punch-dataset/agg-setup-punch-dataset-test.csv')
-df['setup'] = 'Generate punch:' + df['setup']
-for i in range(3):
+df = pd.read_csv('data/agg-generation-dataset/agg-generation-dataset-test.csv')
+for i in range(10):
     setup, punch = df.sample().values[0]
     print(f'\tExample {i + 1}:')
-    print('\t\tSetup:', setup)
-    print('\t\tPunch:', punch)
+    print('\t\tInput:', setup)
+    print('\t\tTarget:', punch)
     input_ids = tokenizer(setup, return_tensors="pt").input_ids
 
     predict_ids = model.generate(input_ids)
     predict = tokenizer.decode(predict_ids[0], skip_special_tokens=True)
-    print('\t\tPredict:', predict)
-
-# Mark generation
-print('(2/2) Mark Generation task')
-df = pd.read_csv('data/agg-marked-joke-dataset/agg-marked-joke-dataset-test.csv')
-df['joke'] = 'Mark joke:' + df['joke']
-for i in range(3):
-    joke, mark = df.sample().values[0]
-    print(f'\tExample {i + 1}:')
-    print('\t\tJoke:', joke)
-    print('\t\tMark:', mark)
-    input_ids = tokenizer(joke, return_tensors="pt").input_ids
-
-    predict_ids = model.generate(input_ids)
-    predict = tokenizer.decode(predict_ids[0], skip_special_tokens=True)
-    print('\t\tPredict:', predict)
+    print('\t\tOutput:', predict)
