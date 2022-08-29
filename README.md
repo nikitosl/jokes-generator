@@ -44,6 +44,11 @@ But we can introduce inspiration into the pipeline, and it will show the directi
          3. YAKE.
       2. Train inspiration model (another task for same t5 model?) to generate inspiration from setup.
    4. Train model to generate punch from setup and inspiration.
+   5. Inference:
+         1. Generate N inspirations from setup.
+         2. Generate punch for each inspiration. 
+         3. Mark all jokes (setup + punch pairs). 
+         4. Select good jokes by some threshold (8, f.e.).
 
 
 # Run T5 finetune process
