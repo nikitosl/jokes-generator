@@ -1,3 +1,0 @@
-#!/bin/bash
-python t5_finetune_generation/run_conditional_generation_train_flax.py t5_finetune_generation/config_generation.json
-python test_t5_generation.py
