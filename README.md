@@ -39,9 +39,9 @@ But we can introduce inspiration into the pipeline, and it will show the directi
    2. Each setup-inspiration pair has only one punch.
    3. Model to generate inspiration. 
       1. Retrieve inspiration from punch. 
-         1. Main word or few words in punch. 
-         2. TF-IDF
-         3. YAKE
+         1. [M-RAKE](https://github.com/vgrabovets/multi_rake). 
+         2. TF-IDF.
+         3. YAKE.
       2. Train inspiration model (another task for same t5 model?) to generate inspiration from setup.
    4. Train model to generate punch from setup and inspiration.
 
