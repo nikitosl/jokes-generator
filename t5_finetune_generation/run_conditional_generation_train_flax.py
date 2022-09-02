@@ -900,7 +900,7 @@ def main():
                 eval_metrics = jax.tree_map(jnp.mean, eval_metrics)
 
                 # Update progress bar
-                epochs.write(f"Step... ({cur_step} | Loss: {eval_metrics['loss']}, Acc: {eval_metrics['accuracy']})")
+                epochs.write(f"Step... ({cur_step} | Loss: {eval_metrics['loss']}")
 
                 # Save metrics
                 if has_tensorboard and jax.process_index() == 0:
@@ -932,7 +932,7 @@ def main():
         eval_metrics = jax.tree_map(jnp.mean, eval_metrics)
 
         # Update progress bar
-        epochs.write(f"Step... ({cur_step} | Loss: {eval_metrics['loss']}, Acc: {eval_metrics['accuracy']})")
+        epochs.write(f"Eval loss: {eval_metrics['loss']}")
 
         # Save metrics
         if has_tensorboard and jax.process_index() == 0:
