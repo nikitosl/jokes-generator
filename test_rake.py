@@ -1,7 +1,5 @@
 import pandas as pd
 
-df = pd.read_csv('data/agg-setup-punch-dataset/agg-setup-punch-dataset-test.csv')
-
 import spacy
 from multi_rake import Rake
 rake = Rake(language_code='ru')
@@ -14,9 +12,8 @@ def get_inspiration(text):
     lem_keywords = [token.lemma_ for token in nlp(keyword)]
     return ' '.join(lem_keywords)
 
-
+df = pd.read_csv('data/agg-setup-punch-dataset/agg-setup-punch-dataset-test.csv')
 for _ in range(10):
-
     text = df.punch.sample().values[0]
     print('Input: ', text)
     inspiration = get_inspiration(text)
