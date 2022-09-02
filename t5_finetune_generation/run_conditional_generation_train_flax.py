@@ -367,7 +367,7 @@ def data_loader(rng: jax.random.PRNGKey, dataset: Dataset, batch_size: int, shuf
         yield batch
 
 
-def write_metric(summary_writer, train_metrics, eval_metrics, train_time, step):
+def write_train_metric(summary_writer, train_metrics, train_time, step):
     summary_writer.scalar("train_time", train_time, step)
 
     train_metrics = get_metrics(train_metrics)
@@ -376,6 +376,8 @@ def write_metric(summary_writer, train_metrics, eval_metrics, train_time, step):
         for i, val in enumerate(vals):
             summary_writer.scalar(tag, val, step - len(vals) + i + 1)
 
+
+def write_eval_metric(summary_writer, eval_metrics, step):
     for metric_name, value in eval_metrics.items():
         summary_writer.scalar(f"eval_{metric_name}", value, step)
 
@@ -744,17 +746,24 @@ def main():
         return traverse_util.unflatten_dict(flat_mask)
 
     # create adam optimizer
-    adamw = optax.adamw(
-        learning_rate=linear_decay_lr_schedule_fn,
-        b1=training_args.adam_beta1,
-        b2=training_args.adam_beta2,
-        eps=training_args.adam_epsilon,
-        weight_decay=training_args.weight_decay,
-        mask=decay_mask_fn,
-    )
+    if training_args.adafactor:
+        # We use the default parameters here to initialize adafactor,
+        # For more details about the parameters please check https://github.com/deepmind/optax/blob/ed02befef9bf81cbbf236be3d2b0e032e9ed4a40/optax/_src/alias.py#L74
+        optimizer = optax.adafactor(
+            learning_rate=linear_decay_lr_schedule_fn,
+        )
+    else:
+        optimizer = optax.adamw(
+            learning_rate=linear_decay_lr_schedule_fn,
+            b1=training_args.adam_beta1,
+            b2=training_args.adam_beta2,
+            weight_decay=training_args.weight_decay,
+            mask=decay_mask_fn,
+        )
+
 
     # Setup train state
-    state = TrainState.create(apply_fn=model.__call__, params=model.params, tx=adamw, dropout_rng=dropout_rng)
+    state = TrainState.create(apply_fn=model.__call__, params=model.params, tx=optimizer, dropout_rng=dropout_rng)
 
     # label smoothed cross entropy
     def loss_fn(logits, labels, padding_mask, label_smoothing_factor=0.0):
@@ -810,7 +819,7 @@ def main():
         metrics = jax.lax.pmean(metrics, axis_name="batch")
         return metrics
 
-    # Define generation function
+    # Define generation fn
     max_length = (
         data_args.val_max_target_length if data_args.val_max_target_length is not None else model.config.max_length
     )
@@ -840,7 +849,7 @@ def main():
     logger.info(f"  Total optimization steps = {total_train_steps}")
 
     train_time = 0
-    epochs = tqdm(range(num_epochs), desc=f"Epoch ... (1/{num_epochs})", position=0)
+    epochs = tqdm(range(num_epochs), desc=f"Epoch ... ", position=0)
     for epoch in epochs:
         # ======================== Training ================================
         train_start = time.time()
@@ -850,59 +859,91 @@ def main():
         train_metrics = []
 
         # Generate an epoch by shuffling sampling indices from the train dataset
+        num_train_samples = len(train_dataset)
         train_loader = data_loader(input_rng, train_dataset, train_batch_size, shuffle=True)
         steps_per_epoch = len(train_dataset) // train_batch_size
         # train
-        for _ in tqdm(range(steps_per_epoch), desc="Training...", position=1, leave=False):
+        for step in tqdm(range(steps_per_epoch), desc="Training...", position=1, leave=False):
             batch = next(train_loader)
             state, train_metric = p_train_step(state, batch)
             train_metrics.append(train_metric)
 
-        train_time += time.time() - train_start
+            cur_step = epoch * (num_train_samples // train_batch_size) + step
 
-        train_metric = unreplicate(train_metric)
+            if cur_step % training_args.logging_steps == 0 and cur_step > 0:
+                # Save metrics
+                train_metric = jax_utils.unreplicate(train_metric)
+                train_time += time.time() - train_start
+                if has_tensorboard and jax.process_index() == 0:
+                    write_train_metric(summary_writer, train_metrics, train_time, cur_step)
 
-        epochs.write(
-            f"Epoch... ({epoch + 1}/{num_epochs} | Loss: {train_metric['loss']}, Learning Rate:"
-            f" {train_metric['learning_rate']})"
-        )
+                epochs.write(
+                    f"Step... ({cur_step} | Loss: {train_metric['loss'].mean()}, Learning Rate:"
+                    f" {train_metric['learning_rate'].mean()})"
+                )
+                train_metrics = []
 
-        # ======================== Evaluating ==============================
+            if (cur_step % training_args.eval_steps == 0) and (cur_step > 0) and (training_args.do_eval):
+                # Evaluating
+                eval_metrics = []
+                eval_loader = data_loader(input_rng, eval_dataset, eval_batch_size)
+                eval_steps = len(eval_dataset) // eval_batch_size
+                for _ in tqdm(range(eval_steps), desc="Evaluating...", position=2, leave=False):
+                    # Model forward
+                    batch = next(eval_loader)
+
+                    metrics = p_eval_step(state.params, batch)
+                    eval_metrics.append(metrics)
+
+                # get eval metrics
+                eval_metrics = get_metrics(eval_metrics)
+                eval_metrics = jax.tree_map(jnp.mean, eval_metrics)
+
+                # Update progress bar
+                epochs.write(f"Step... ({cur_step} | Loss: {eval_metrics['loss']}, Acc: {eval_metrics['accuracy']})")
+
+                # Save metrics
+                if has_tensorboard and jax.process_index() == 0:
+                    write_eval_metric(summary_writer, eval_metrics, cur_step)
+
+            if cur_step % training_args.save_steps == 0 and cur_step > 0:
+                # save checkpoint after each epoch and push checkpoint to the hub
+                if jax.process_index() == 0:
+                    params = jax.device_get(jax.tree_map(lambda x: x[0], state.params))
+                    model.save_pretrained(training_args.output_dir, params=params)
+                    tokenizer.save_pretrained(training_args.output_dir)
+                    if training_args.push_to_hub:
+                        repo.push_to_hub(commit_message=f"Saving weights and logs of step {cur_step}", blocking=False)
+
+    # ======================== Evaluating ==============================
+    if training_args.do_eval:
         eval_metrics = []
-        eval_preds = []
-        eval_labels = []
-
         eval_loader = data_loader(input_rng, eval_dataset, eval_batch_size)
         eval_steps = len(eval_dataset) // eval_batch_size
         for _ in tqdm(range(eval_steps), desc="Evaluating...", position=2, leave=False):
             # Model forward
             batch = next(eval_loader)
-            labels = batch["labels"]
 
             metrics = p_eval_step(state.params, batch)
             eval_metrics.append(metrics)
 
-        # normalize eval metrics
+        # get eval metrics
         eval_metrics = get_metrics(eval_metrics)
         eval_metrics = jax.tree_map(jnp.mean, eval_metrics)
 
-        # Print metrics and update progress bar
-        desc = f"Epoch... ({epoch + 1}/{num_epochs} | Eval Loss: {eval_metrics['loss']})"
-        epochs.write(desc)
-        epochs.desc = desc
+        # Update progress bar
+        epochs.write(f"Step... ({cur_step} | Loss: {eval_metrics['loss']}, Acc: {eval_metrics['accuracy']})")
 
         # Save metrics
         if has_tensorboard and jax.process_index() == 0:
-            cur_step = epoch * (len(train_dataset) // train_batch_size)
-            write_metric(summary_writer, train_metrics, eval_metrics, train_time, cur_step)
+            write_eval_metric(summary_writer, eval_metrics, cur_step)
 
-        # save checkpoint after each epoch and push checkpoint to the hub
+        # save final metrics in json
         if jax.process_index() == 0:
-            params = jax.device_get(jax.tree_map(lambda x: x[0], state.params))
-            model.save_pretrained(training_args.output_dir, params=params)
-            tokenizer.save_pretrained(training_args.output_dir)
-            if training_args.push_to_hub:
-                repo.push_to_hub(commit_message=f"Saving weights and logs of epoch {epoch}", blocking=False)
+            rouge_metrics = {f"eval_{metric_name}": value for metric_name, value in eval_metrics.items()}
+            path = os.path.join(training_args.output_dir, "test_results.json")
+            with open(path, "w") as f:
+                json.dump(rouge_metrics, f, indent=4, sort_keys=True)
 
     # ======================== Prediction loop ==============================
     if training_args.do_predict:
@@ -942,13 +983,6 @@ def main():
         # Print metrics
         desc = f"Predict Loss: {pred_metrics['loss']} | {rouge_desc})"
         logger.info(desc)
-
-        # save final metrics in json
-        if jax.process_index() == 0:
-            rouge_metrics = {f"test_{metric_name}": value for metric_name, value in rouge_metrics.items()}
-            path = os.path.join(training_args.output_dir, "test_results.json")
-            with open(path, "w") as f:
-                json.dump(rouge_metrics, f, indent=4, sort_keys=True)
 
 
 if __name__ == "__main__":
