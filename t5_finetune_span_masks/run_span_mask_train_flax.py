@@ -506,6 +506,9 @@ def main():
     else:
         model_args, data_args, training_args = parser.parse_args_into_dataclasses()
 
+    # Set the verbosity to info of the Transformers logger (on main process only):
+    print(f"Training/evaluation parameters {training_args}")
+
     # Sending telemetry. Tracking the example usage helps us better allocate resources to maintain them. The
     # information sent is the one passed as arguments along with your Python/PyTorch versions.
     # send_example_telemetry("run_t5_mlm", model_args, data_args, framework="flax")
