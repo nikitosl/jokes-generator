@@ -45,7 +45,7 @@
   "max_eval_samples": null,
   "max_predict_samples": null,
   "preprocessing_num_workers": 8,
-  "source_prefix": "",
+  "source_prefix": null,
   "predict_with_generate": false,
   "num_beams": 3,
   "overwrite_cache": true
