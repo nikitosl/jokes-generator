@@ -863,7 +863,7 @@ def main():
         train_loader = data_loader(input_rng, train_dataset, train_batch_size, shuffle=True)
         steps_per_epoch = len(train_dataset) // train_batch_size
         # train
-        for step in tqdm(range(steps_per_epoch), desc="Training...", position=1, leave=False):
+        for step in tqdm(range(steps_per_epoch), desc="Training...", position=1):
             batch = next(train_loader)
             state, train_metric = p_train_step(state, batch)
             train_metrics.append(train_metric)
@@ -888,7 +888,7 @@ def main():
                 eval_metrics = []
                 eval_loader = data_loader(input_rng, eval_dataset, eval_batch_size)
                 eval_steps = len(eval_dataset) // eval_batch_size
-                for _ in tqdm(range(eval_steps), desc="Evaluating...", position=2, leave=False):
+                for _ in tqdm(range(eval_steps), desc="Evaluating...", position=2):
                     # Model forward
                     batch = next(eval_loader)
 
@@ -920,7 +920,7 @@ def main():
         eval_metrics = []
         eval_loader = data_loader(input_rng, eval_dataset, eval_batch_size)
         eval_steps = len(eval_dataset) // eval_batch_size
-        for _ in tqdm(range(eval_steps), desc="Evaluating...", position=2, leave=False):
+        for _ in tqdm(range(eval_steps), desc="Evaluating...", position=2):
             # Model forward
             batch = next(eval_loader)
 
@@ -955,7 +955,7 @@ def main():
 
         pred_loader = data_loader(input_rng, predict_dataset, eval_batch_size)
         pred_steps = len(predict_dataset) // eval_batch_size
-        for _ in tqdm(range(pred_steps), desc="Predicting...", position=2, leave=False):
+        for _ in tqdm(range(pred_steps), desc="Predicting...", position=2):
             # Model forward
             batch = next(pred_loader)
             labels = batch["labels"]
