@@ -3,8 +3,8 @@ import pandas as pd
 
 # model_name, model_type = "sberbank-ai/ruT5-base", "pytorch"
 model_name, model_type = "naltukhov/joke-generator-rus-t5", "flax"
-tokenizer = T5Tokenizer.from_pretrained(model_name, from_flax=model_type=="flax")
-model = T5ForConditionalGeneration.from_pretrained(model_name, from_flax=model_type=="flax")
+tokenizer = T5Tokenizer.from_pretrained(model_name, from_flax=model_type=="flax", force_download=True)
+model = T5ForConditionalGeneration.from_pretrained(model_name, from_flax=model_type=="flax", force_download=True)
 print(f'Loaded model {model_name}')
 
 # Punch generation
@@ -19,3 +19,4 @@ for i in range(10):
     predict_ids = model.generate(input_ids)
     predict = tokenizer.decode(predict_ids[0], skip_special_tokens=True)
     print('\t\tOutput:', predict)
+
