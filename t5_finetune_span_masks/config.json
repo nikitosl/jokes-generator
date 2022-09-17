@@ -11,7 +11,7 @@
   "adam_beta2": 0.99,
   "adam_epsilon": 1e-08,
   "adafactor": true,
-  "num_train_epochs": 100,
+  "num_train_epochs": 15,
   "warmup_steps": 100,
   "logging_steps": 50,
   "save_steps": 5000,
