@@ -1,4 +1,3 @@
-# jokes-generator
 Can AI generate jokes? How many data it need? Which model architecture is best suited? 
 Here I am trying to answer on this questions.
 
@@ -39,7 +38,7 @@ Model trained using flax on huge dataset with jokes and anekdots on different ta
 3. Conditional generation: generate punch by given setup and inspiration (dataset size: 240K)
 4. Conditional generation: generate mark by given setup and punch (dataset size: 200K)
 
-# Run T5 finetune process
+## Run T5 finetune process
 ```
 cd jokes-generator/
 bash setup_linux.sh
