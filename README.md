@@ -1,7 +1,7 @@
+## Problem
 Can AI generate jokes?  
 How many data it need?  
 Which model architecture is best suited?  
-Here I am trying to answer on this questions.
 
 ## Task
 Model create for jokes generation task on Russian language.
