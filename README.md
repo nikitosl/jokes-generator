@@ -36,10 +36,10 @@ and handle multitask fitting (by adding task-specific prefix to input: "Generate
 
 Model finetuned using flax on huge dataset with jokes and anekdots on different tasks:
 1. Span masks (dataset size: 850K)
-2. Conditional generation tasks:
-  1. Generate inspiration by given setup (dataset size: 230K)
-  2. Generate punch by given setup and inspiration (dataset size: 240K)
-  3. Generate mark by given setup and punch (dataset size: 200K)
+2. Conditional generation tasks:  
+  a. Generate inspiration by given setup (dataset size: 230K)  
+  b. Generate punch by given setup and inspiration (dataset size: 240K)  
+  c. Generate mark by given setup and punch (dataset size: 200K)  
 
 ## Run T5 finetune process
 ```
