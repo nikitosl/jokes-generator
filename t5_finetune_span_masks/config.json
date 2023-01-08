@@ -1,5 +1,5 @@
 {
-  "output_dir": "../joke-generator-rus-t5",
+  "output_dir": "../joke-generator-rus-t5-finetune-span",
   "overwrite_output_dir": true,
   "do_train": true,
   "do_eval": true,
@@ -18,7 +18,7 @@
   "eval_steps": 200,
   "seed": 1,
   "push_to_hub": true,
-  "hub_model_id": "naltukhov/joke-generator-rus-t5",
+  "hub_model_id": "naltukhov/joke-generator-rus-t5-finetune-span",
   "hub_token": null,
   "use_auth_token": true,
   "model_name_or_path": "sberbank-ai/ruT5-large",
