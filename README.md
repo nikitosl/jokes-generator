@@ -34,11 +34,12 @@ From previous experience I decided to train one model for all tasks (mark predic
 For this task T5 model published by Google is very suitable because it reverts all tasks into text-to-text tasks 
 and handle multitask fitting (by adding task-specific prefix to input: "Generate punch:" / "Mark joke:" /...). 
 
-Model trained using flax on huge dataset with jokes and anekdots on different tasks:
+Model finetuned using flax on huge dataset with jokes and anekdots on different tasks:
 1. Span masks (dataset size: 850K)
-2. Conditional generation: generate inspiration by given setup (dataset size: 230K)
-3. Conditional generation: generate punch by given setup and inspiration (dataset size: 240K)
-4. Conditional generation: generate mark by given setup and punch (dataset size: 200K)
+2. Conditional generation tasks:
+  1. Generate inspiration by given setup (dataset size: 230K)
+  2. Generate punch by given setup and inspiration (dataset size: 240K)
+  3. Generate mark by given setup and punch (dataset size: 200K)
 
 ## Run T5 finetune process
 ```
