@@ -23,7 +23,7 @@
   "hub_model_id": "naltukhov/joke-generator-t5-rus-finetune-gen",
   "hub_token": null,
   "use_auth_token": true,
-  "model_name_or_path": "naltukhov/joke-generator-rus-t5-finetune-span",
+  "model_name_or_path": "naltukhov/joke-generator-t5-rus-finetune-span",
   "is_pytorch_weights": false,
   "model_type": null,
   "config_name": null,
