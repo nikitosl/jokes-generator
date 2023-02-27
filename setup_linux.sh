@@ -1,6 +1,10 @@
 pip install --upgrade pip
-pip install jax[cuda11_cudnn82] -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html
-pip install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu113
+
+conda install jaxlib=*=*cuda* jax cuda-nvcc -c conda-forge -c nvidia # work
+# pip install --upgrade "jax[cuda]==0.3.15" -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html # to try
+# pip install --upgrade "jax[cuda]" -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html # not work
+
+
 pip install -r requirements.txt
 
 curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash

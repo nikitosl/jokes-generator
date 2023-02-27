@@ -1,10 +1,10 @@
 dataclasses
 datasets
-
 flax
-optax>=0.0.9
 huggingface-hub
 transformers[flax]
+
 sentencepiece
+
 nltk
 rouge-score
