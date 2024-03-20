@@ -1,6 +1,4 @@
 # jokes-generator
-Set of tools for AA and AB tests.
-
 LLM for jokes generation based on input text
 
 ## Problem
