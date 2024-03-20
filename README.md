@@ -1,3 +1,5 @@
+LLM for jokes generation based on input text
+
 ## Problem
 Can AI generate jokes?  
 How many data it need?  
